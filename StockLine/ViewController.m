@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) GraphTool *graphTool;
 @property (nonatomic, strong) Coordinate *currentCoordinate;
+@property (nonatomic, strong) UIColor *stateColor;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureTool;
 @property (nonatomic, strong) UITapGestureRecognizer *buy;
@@ -26,15 +27,20 @@
 
 @property (nonatomic, strong) UILabel *firstBlock;
 @property (nonatomic, strong) UILabel *pointBlock;
-@property (nonatomic, strong) UITextField *infoLabel;
+
+
+@property (nonatomic, strong) UILabel *stateLabel;
+@property (nonatomic, strong) UILabel *infoTextLabel;
+@property (nonatomic, strong) UILabel *infoNumberLabel;
+@property (nonatomic, strong) UILabel *moneyLabel;
 
 @property (nonatomic, assign) int timeIndex;
 @property (nonatomic, assign) float currentPrice;
-
 @property (nonatomic, assign) float boughtPrice;
 @property (nonatomic, assign) float netGainLoss;
-
 @property (nonatomic, assign) float shortPrice;
+
+@property (nonatomic, assign) float money;
 
 @property (nonatomic, assign) CFTimeInterval startTime;
 @property (nonatomic, strong) CADisplayLink *displaylink;
@@ -61,12 +67,13 @@ static const float kUITransitionTime= 1;
     //    NSLog(@"%f", self.startTime);
     self.displaylink = [CADisplayLink displayLinkWithTarget:self selector:@selector(update)];
     [self.displaylink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    self.stateColor = [UIColor colorWithRed:235.0/255.0 green:155.0/255.0 blue:64.0/255.0 alpha:1.0];
     
 #pragma mark graph
-    self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:155.0/255.0 blue:64.0/255.0 alpha:1.0];
+    self.view.backgroundColor = self.stateColor;
     self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 2500, 800)];
-    self.graphTool.backgroundColor = self.view.backgroundColor;
-    self.scrollView.backgroundColor = self.view.backgroundColor;
+    self.graphTool.backgroundColor = self.stateColor;
+    self.scrollView.backgroundColor = self.stateColor;
     self.graphTool.userInteractionEnabled = YES;
     self.startTime = CACurrentMediaTime();
     
@@ -74,19 +81,37 @@ static const float kUITransitionTime= 1;
     self.pointBlock = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 1, CGRectGetHeight(self.graphTool.frame))];
     self.pointBlock.backgroundColor = [UIColor blackColor];
     self.pointBlock.alpha = 0.15;
-    [UIView animateWithDuration:kTotalTime animations:^{
-        self.pointBlock.frame = CGRectMake(CGRectGetWidth(self.graphTool.frame), 0, 1, CGRectGetHeight(self.graphTool.frame));
-    }];
+    //    [UIView animateWithDuration:kTotalTime animations:^{
+    //        self.pointBlock.frame = CGRectMake(CGRectGetWidth(self.graphTool.frame), 0, 1, CGRectGetHeight(self.graphTool.frame));
+    //    }];
     self.timeIndex = self.pointBlock.frame.origin.x;
     self.firstBlock = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
-    self.firstBlock.backgroundColor = self.graphTool.backgroundColor;
-    [UIView animateWithDuration:kTotalTime animations:^{
-        self.firstBlock.frame = CGRectMake(CGRectGetWidth(self.graphTool.frame), 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-    }];
+    self.firstBlock.backgroundColor = self.stateColor;
+    //    [UIView animateWithDuration:kTotalTime animations:^{
+    //        self.firstBlock.frame = CGRectMake(CGRectGetWidth(self.graphTool.frame), 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    //    }];
     
 #pragma mark label
     
-    self.infoLabel = [[UITextField alloc]initWithFrame:CGRectMake(0, 0, 200, CGRectGetHeight(self.graphTool.frame))];
+    self.stateLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
+    self.stateLabel.text = @"WATCHING";
+    self.stateLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:42];
+    self.stateLabel.alpha = 0.2;
+    
+    self.infoTextLabel = [[UILabel alloc]initWithFrame:CGRectMake(-100, 70, 100, CGRectGetHeight(self.graphTool.frame))];
+    self.infoTextLabel.text = @"Current Price $\nVolitility";
+    self.infoTextLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:14];
+    self.infoTextLabel.numberOfLines = 0;
+    self.infoTextLabel.alpha = 0.45;
+    self.infoTextLabel.textAlignment = NSTextAlignmentRight;
+    
+    self.infoNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame))];
+    self.infoNumberLabel.text = [NSString stringWithFormat:@"%f\n", self.currentPrice];
+    self.infoNumberLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:14];
+    self.infoNumberLabel.numberOfLines = 0;
+    self.infoNumberLabel.alpha = 0.6;
+    self.infoNumberLabel.textAlignment = NSTextAlignmentLeft;
+    
     
 #pragma mark userActions
     
@@ -116,12 +141,11 @@ static const float kUITransitionTime= 1;
     //            self.scrollView.contentOffset = CGPointMake(CGRectGetWidth(self.graphTool.frame) - 500, self.currentprice + 500);
     //    }];
     //    }
-    [self.scrollView setZoomScale:1.5];
     self.view.opaque = YES;
     self.scrollView.userInteractionEnabled = YES;
     self.scrollView.bounces = NO;
     self.scrollView.clipsToBounds = YES;
-    
+    //    [self.scrollView setZoomScale:1.5];
     [self.scrollView setMaximumZoomScale:4.0];
     [self.scrollView setMinimumZoomScale:1.0];
     
@@ -139,6 +163,9 @@ static const float kUITransitionTime= 1;
     [self.graphTool addGestureRecognizer:self.initiateShortSelling];
     [self.graphTool addGestureRecognizer:self.shortSell];
     //    [self.graphTool addSubview:self.infoLabel];
+    [self.scrollView addSubview:self.stateLabel];
+    [self.scrollView addSubview:self.infoTextLabel];
+    [self.scrollView addSubview:self.infoNumberLabel];
     
 #pragma mark constraints
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
@@ -175,7 +202,15 @@ static const float kUITransitionTime= 1;
     }
     self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
     self.currentPrice = [(self.currentCoordinate.price)floatValue];
-//    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
+    
+    self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
+    self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    
+    self.infoTextLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
+    self.infoNumberLabel.frame = CGRectMake(self.timeIndex + 5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame));
+    self.infoNumberLabel.text = [NSString stringWithFormat:@"%0.2f\n", self.currentPrice];
+    
+    //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 }
 
 - (void)buyAction:(UITapGestureRecognizer *)sender {
@@ -184,16 +219,32 @@ static const float kUITransitionTime= 1;
     
     self.buy.enabled = NO;
     self.sell.enabled = YES;
-    self.infoLabel.text = [NSString stringWithFormat:@"Bought at Time%f\nPrice: $0.2%f", CACurrentMediaTime() - self.startTime, self.currentPrice];
-    self.infoLabel.alpha = 0.3;
+    self.stateLabel.text = [NSString stringWithFormat:@"BOUGHT@$%0.2f",self.boughtPrice];
+    self.stateLabel.alpha = 0;
+    self.stateLabel.textColor = [UIColor colorWithRed:192.0/255.0 green:14.0/255.0 blue:14.0/255.0 alpha:1.0];
+    
     [UIView animateWithDuration:kUITransitionTime animations:^{
-        self.infoLabel.alpha = 1.0;
+        self.stateLabel.alpha = 0.2;
+
     }];
+    //    self.infoLabel.text = [NSString stringWithFormat:@"Bought at Time%f\nPrice: $0.2%f", CACurrentMediaTime() - self.startTime, self.currentPrice];
+    //    self.infoLabel.alpha = 0.3;
+    //    [UIView animateWithDuration:kUITransitionTime animations:^{
+    //        self.infoLabel.alpha = 1.0;
+    
 }
 - (void)sellAction:(UITapGestureRecognizer *)sender {
-    self.netGainLoss =  self.boughtPrice - self.currentPrice;
+    self.netGainLoss =  -(self.boughtPrice - self.currentPrice);
     
     NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
+    
+    self.stateLabel.text = [NSString stringWithFormat:@"WATCHING"];
+    self.stateLabel.alpha = 0;
+    self.stateLabel.textColor = [UIColor blackColor];
+    [UIView animateWithDuration:kUITransitionTime animations:^{
+        self.stateLabel.alpha = 0.2;
+        
+    }];
     
     self.sell.enabled = NO;
     self.buy.enabled = YES;
@@ -207,15 +258,31 @@ static const float kUITransitionTime= 1;
     self.initiateShortSelling.enabled = NO;
     self.shortSell.enabled = YES;
     self.buy.enabled = NO;
+
+    self.stateLabel.text = [NSString stringWithFormat:@"SHORTED@$%0.2f",self.shortPrice];
+    self.stateLabel.alpha = 0;
+    self.stateLabel.textColor = [UIColor colorWithRed:192.0/255.0 green:14.0/255.0 blue:14.0/255.0 alpha:1.0];
+    
+    [UIView animateWithDuration:kUITransitionTime animations:^{
+        self.stateLabel.alpha = 0.2;
+        
+    }];
 }
 - (void)shortSell:(UITapGestureRecognizer *)sender {
-    self.netGainLoss = -(self.shortPrice - self.currentPrice);
+    self.netGainLoss = (self.shortPrice - self.currentPrice);
     self.initiateShortSelling.enabled = YES;
     
     NSLog(@"%f, %d, Shorted At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
     
     self.shortSell.enabled = NO;
     self.buy.enabled = YES;
+    
+    self.stateLabel.text = [NSString stringWithFormat:@"WATCHING"];
+    self.stateLabel.alpha = 0;
+    self.stateLabel.textColor = [UIColor blackColor];
+    [UIView animateWithDuration:kUITransitionTime animations:^{
+        self.stateLabel.alpha = 0.2;
+            }];
     
 }
 

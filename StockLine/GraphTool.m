@@ -14,21 +14,20 @@
 
 @property (nonatomic, assign) CGContextRef context;
 @property (nonatomic, strong) Stock *stock;
-@property (nonatomic, strong) NSMutableDictionary *dictOfCoordinates;
 
 @end
 
 @implementation GraphTool
 static const float kYOffset = 500;
+static const float kStockPriceRange = 100;
 
 
 - (instancetype)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
         self.stock = [[Stock alloc] initWithVolatility:10];
-        self.stock.stockPrice = arc4random_uniform(100) + kYOffset;
+        self.stock.stockPrice = arc4random_uniform(kStockPriceRange) + kYOffset;
         self.startingPrice = self.stock.stockPrice;
-        _dictOfCoordinates = [[NSMutableDictionary alloc]init];
         _arrayOfCoordinates = [[NSMutableArray alloc]init];
         
     }
@@ -86,15 +85,14 @@ static const float kYOffset = 500;
         }
         self.stock.timeVariable = x;
         CGContextAddLineToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice);
+        float stockPriceOnGraph = (1000 - self.stock.stockPrice)/20;
+        [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(stockPriceOnGraph)]];
         
-        [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(self.stock.stockPrice)]];
+        NSLog(@"$%0.2f, $%0.2f", self.stock.stockPrice, stockPriceOnGraph);
         
-        //NSLog(@"$%0.2f", self.stock.stockPrice);
-        NSLog(@"count: %lu", (unsigned long)self.arrayOfCoordinates.count);
+//        NSLog(@"count: %lu", (unsigned long)self.arrayOfCoordinates.count);
         //NSLog(@"%@", self.stock.arrayOfCoordinates.description);
-        
     }
-    
 }
 
 @end
