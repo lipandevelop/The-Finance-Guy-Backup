@@ -26,7 +26,7 @@
 
 @property (nonatomic, strong) UILabel *firstBlock;
 @property (nonatomic, strong) UILabel *pointBlock;
-@property (nonatomic, strong) UILabel *infoLabel;
+@property (nonatomic, strong) UITextField *infoLabel;
 
 @property (nonatomic, assign) int timeIndex;
 @property (nonatomic, assign) float currentPrice;
@@ -47,7 +47,7 @@
 
 @implementation ViewController
 
-static const float kTotalTime = 60;
+static const float kTotalTime = 80;
 static const float kUITransitionTime= 1;
 
 - (void)viewDidLoad {
@@ -64,7 +64,7 @@ static const float kUITransitionTime= 1;
     
 #pragma mark graph
     self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:155.0/255.0 blue:64.0/255.0 alpha:1.0];
-    self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 3520, 800)];
+    self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 7200, 800)];
     self.graphTool.backgroundColor = self.view.backgroundColor;
     self.scrollView.backgroundColor = self.view.backgroundColor;
     self.graphTool.userInteractionEnabled = YES;
@@ -86,9 +86,7 @@ static const float kUITransitionTime= 1;
     
 #pragma mark label
     
-    self.infoLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 300)];
-    [self.infoLabel setText:@"blah"];
-    self.infoLabel.backgroundColor = [UIColor redColor];
+    self.infoLabel = [[UITextField alloc]initWithFrame:CGRectMake(0, 0, 200, CGRectGetHeight(self.graphTool.frame))];
     
 #pragma mark userActions
     
@@ -135,15 +133,12 @@ static const float kUITransitionTime= 1;
     [self.scrollView addSubview:self.graphTool];
     [self.graphTool addSubview:self.firstBlock];
     [self.graphTool addSubview:self.pointBlock];
-    self.infoLabel.text = @"asdf";
-    self.infoLabel.backgroundColor = [UIColor redColor];
-    self.infoLabel.textColor = [UIColor blackColor];
     
     [self.graphTool addGestureRecognizer:self.buy];
     [self.graphTool addGestureRecognizer:self.sell];
     [self.graphTool addGestureRecognizer:self.initiateShortSelling];
     [self.graphTool addGestureRecognizer:self.shortSell];
-    [self.graphTool addSubview:self.infoLabel];
+    //    [self.graphTool addSubview:self.infoLabel];
     
 #pragma mark constraints
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
@@ -154,13 +149,12 @@ static const float kUITransitionTime= 1;
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1000]];
     
-    //#pragma infolabel
+    
+    //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:0]];
     //
-    //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.graphTool attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:100]];
+    //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0]];
     //
-    //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.graphTool attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:-100]];
-    //
-    //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:200]];
+    //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:200]];
     //
     //    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.infoLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:300]];
 }
@@ -176,12 +170,12 @@ static const float kUITransitionTime= 1;
 
 - (void)update {
     self.timeIndex = ((self.displaylink.timestamp - self.startTime)/0.1);
-    if (self.displaylink.timestamp - self.startTime >= kTotalTime + 0.333) {
+    if (self.displaylink.timestamp - self.startTime >= kTotalTime) {
         self.displaylink.paused = YES;
     }
     self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
     self.currentPrice = [(self.currentCoordinate.price)floatValue];
-    //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
+        NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 }
 
 - (void)buyAction:(UITapGestureRecognizer *)sender {

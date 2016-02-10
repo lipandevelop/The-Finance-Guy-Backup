@@ -30,7 +30,7 @@ static const float kYOffset = 500;
         self.startingPrice = self.stock.stockPrice;
         _dictOfCoordinates = [[NSMutableDictionary alloc]init];
         _arrayOfCoordinates = [[NSMutableArray alloc]init];
-
+        
     }
     return self;
 }
@@ -48,16 +48,16 @@ static const float kYOffset = 500;
     NSLog(@"Distribution: 1sd%d, 2sd%d", self.stock.distribution1sd, self.stock.distribution2sd);
     [self simulateStock];
     
-//    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect), CGRectGetHeight(rect));
-//    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect), CGRectGetHeight(rect));
-//    CGContextClosePath(self.context);
-//    CGPathRef fillPath = CGContextCopyPath(self.context);
+    //    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect), CGRectGetHeight(rect));
+    //    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect), CGRectGetHeight(rect));
+    //    CGContextClosePath(self.context);
+    //    CGPathRef fillPath = CGContextCopyPath(self.context);
     
     //CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:29.0/255.0 green:82.0/255.0 blue:174.0/255.0 alpha:0.8].CGColor);
-//    CGContextFillPath(self.context);
-//    CGContextAddPath(self.context, fillPath);
+    //    CGContextFillPath(self.context);
+    //    CGContextAddPath(self.context, fillPath);
     CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
-//    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
+    //    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
     
     CGContextSetLineWidth(self.context, 7);
     CGContextSetLineCap(self.context, kCGLineCapRound);
@@ -65,7 +65,7 @@ static const float kYOffset = 500;
 }
 
 - (void)simulateStock {
-    for (int x; x < 5000; x += 5) {
+    for (int x; x < 2400; x += 3) {
         int f = arc4random_uniform(99);
         float distribution = (float) f;
         
@@ -90,11 +90,11 @@ static const float kYOffset = 500;
         [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(self.stock.stockPrice)]];
         
         //NSLog(@"$%0.2f", self.stock.stockPrice);
-        //NSLog(@"count: %lu", (unsigned long)self.arrayOfCoordinates.count);
+        NSLog(@"count: %lu", (unsigned long)self.arrayOfCoordinates.count);
         //NSLog(@"%@", self.stock.arrayOfCoordinates.description);
         
     }
-
+    
 }
 
 @end
