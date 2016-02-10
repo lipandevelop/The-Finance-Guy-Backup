@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0A18400D1C6929B400FDAF13 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A18400C1C6929B400FDAF13 /* main.m */; };
 		0A1840101C6929B400FDAF13 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A18400F1C6929B400FDAF13 /* AppDelegate.m */; };
-		0A1840131C6929B400FDAF13 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840121C6929B400FDAF13 /* ViewController.m */; };
 		0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1840141C6929B400FDAF13 /* Main.storyboard */; };
 		0A1840191C6929B400FDAF13 /* StockLine.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840171C6929B400FDAF13 /* StockLine.xcdatamodeld */; };
 		0A18401B1C6929B400FDAF13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A18401A1C6929B400FDAF13 /* Assets.xcassets */; };
@@ -18,7 +17,7 @@
 		0A18402A1C692D1400FDAF13 /* Stock.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840291C692D1400FDAF13 /* Stock.m */; };
 		0A1840391C696C3300FDAF13 /* Coordinate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840381C696C3300FDAF13 /* Coordinate.m */; };
 		0A18403B1C69A71900FDAF13 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A18403A1C69A71900FDAF13 /* QuartzCore.framework */; };
-		0A8F5D331C6A9E9300140263 /* infoLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F5D321C6A9E9300140263 /* infoLabel.m */; };
+		0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F5D341C6AD29C00140263 /* ViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +26,6 @@
 		0A18400E1C6929B400FDAF13 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0A18400F1C6929B400FDAF13 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0A1840111C6929B400FDAF13 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		0A1840121C6929B400FDAF13 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		0A1840151C6929B400FDAF13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0A1840181C6929B400FDAF13 /* StockLine.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = StockLine.xcdatamodel; sourceTree = "<group>"; };
 		0A18401A1C6929B400FDAF13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -40,8 +38,7 @@
 		0A1840371C696C3300FDAF13 /* Coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinate.h; sourceTree = "<group>"; };
 		0A1840381C696C3300FDAF13 /* Coordinate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coordinate.m; sourceTree = "<group>"; };
 		0A18403A1C69A71900FDAF13 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		0A8F5D311C6A9E9300140263 /* infoLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = infoLabel.h; sourceTree = "<group>"; };
-		0A8F5D321C6A9E9300140263 /* infoLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = infoLabel.m; sourceTree = "<group>"; };
+		0A8F5D341C6AD29C00140263 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,9 +76,7 @@
 				0A18400E1C6929B400FDAF13 /* AppDelegate.h */,
 				0A18400F1C6929B400FDAF13 /* AppDelegate.m */,
 				0A1840111C6929B400FDAF13 /* ViewController.h */,
-				0A1840121C6929B400FDAF13 /* ViewController.m */,
-				0A8F5D311C6A9E9300140263 /* infoLabel.h */,
-				0A8F5D321C6A9E9300140263 /* infoLabel.m */,
+				0A8F5D341C6AD29C00140263 /* ViewController.m */,
 				0A1840251C692A5400FDAF13 /* GraphTool.h */,
 				0A1840261C692A5400FDAF13 /* GraphTool.m */,
 				0A1840281C692D1400FDAF13 /* Stock.h */,
@@ -177,8 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A18402A1C692D1400FDAF13 /* Stock.m in Sources */,
-				0A1840131C6929B400FDAF13 /* ViewController.m in Sources */,
-				0A8F5D331C6A9E9300140263 /* infoLabel.m in Sources */,
+				0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */,
 				0A1840101C6929B400FDAF13 /* AppDelegate.m in Sources */,
 				0A1840191C6929B400FDAF13 /* StockLine.xcdatamodeld in Sources */,
 				0A18400D1C6929B400FDAF13 /* main.m in Sources */,

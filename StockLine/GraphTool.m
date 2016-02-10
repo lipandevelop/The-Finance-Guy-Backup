@@ -16,17 +16,17 @@
 @property (nonatomic, strong) Stock *stock;
 @property (nonatomic, strong) NSMutableDictionary *dictOfCoordinates;
 
-
-
 @end
 
 @implementation GraphTool
+static const float kYOffset = 500;
+
 
 - (instancetype)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
         self.stock = [[Stock alloc] initWithVolatility:10];
-        self.stock.stockPrice = 1000;
+        self.stock.stockPrice = arc4random_uniform(100) + kYOffset;
         self.startingPrice = self.stock.stockPrice;
         _dictOfCoordinates = [[NSMutableDictionary alloc]init];
         _arrayOfCoordinates = [[NSMutableArray alloc]init];
@@ -38,14 +38,33 @@
 - (void)drawRect:(CGRect)rect {
     self.context = UIGraphicsGetCurrentContext();
     CGContextBeginPath(self.context);
-    CGContextMoveToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice);
+    CGContextMoveToPoint(self.context, 0, self.stock.stockPrice);
+    NSLog(@"Starting Price: %0.2f", self.stock.stockPrice - kYOffset);
     NSLog(@"Standard Deviation: %0.2f", self.stock.standardDeviation);
     NSLog(@"Volatility: %d", self.stock.volatility);
     NSLog(@"Company State: %0.2f", self.stock.companyState);
     NSLog(@"Value: %0.2f", self.stock.value);
     NSLog(@"Skewness %d", self.stock.skewness);
     NSLog(@"Distribution: 1sd%d, 2sd%d", self.stock.distribution1sd, self.stock.distribution2sd);
+    [self simulateStock];
     
+//    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect), CGRectGetHeight(rect));
+//    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect), CGRectGetHeight(rect));
+//    CGContextClosePath(self.context);
+//    CGPathRef fillPath = CGContextCopyPath(self.context);
+    
+    //CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:29.0/255.0 green:82.0/255.0 blue:174.0/255.0 alpha:0.8].CGColor);
+//    CGContextFillPath(self.context);
+//    CGContextAddPath(self.context, fillPath);
+    CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
+//    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
+    
+    CGContextSetLineWidth(self.context, 7);
+    CGContextSetLineCap(self.context, kCGLineCapRound);
+    CGContextStrokePath(self.context);
+}
+
+- (void)simulateStock {
     for (int x; x < 5000; x += 5) {
         int f = arc4random_uniform(99);
         float distribution = (float) f;
@@ -66,39 +85,16 @@
             }
         }
         self.stock.timeVariable = x;
-        CGContextAddLineToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice/2);
-
+        CGContextAddLineToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice);
+        
         [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(self.stock.stockPrice)]];
         
-        //NSLog(@"$%0.2f", self.stock.stockPrice/200);
+        //NSLog(@"$%0.2f", self.stock.stockPrice);
         //NSLog(@"count: %lu", (unsigned long)self.arrayOfCoordinates.count);
         //NSLog(@"%@", self.stock.arrayOfCoordinates.description);
         
     }
-    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect)+10, CGRectGetHeight(rect)+10);
-    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect)-10, CGRectGetHeight(rect)+10);
-    CGContextClosePath(self.context);
-//    CGPathRef fillPath = CGContextCopyPath(self.context);
-    //CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:29.0/255.0 green:82.0/255.0 blue:174.0/255.0 alpha:0.8].CGColor);
-//    CGContextFillPath(self.context);
-//    CGContextAddPath(self.context, fillPath);
-    CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
-//    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
-    
-    CGContextSetLineWidth(self.context, 10);
-    CGContextSetLineCap(self.context, kCGLineCapRound);
-    CGContextStrokePath(self.context);
-}
 
-- (void)updateStock {
-
-        //NSLog(@"%@", self.stock.arrayOfCoordinates.description);
-    
-}
-
-
-- (void)simulateStock {
-    
 }
 
 @end
