@@ -24,6 +24,7 @@
 @property (nonatomic, strong) UITapGestureRecognizer *sell;
 @property (nonatomic, strong) UISwipeGestureRecognizer *initiateShortSelling;
 @property (nonatomic, strong) UITapGestureRecognizer *shortSell;
+@property (nonatomic, strong) UISlider *shareSlider;
 
 @property (nonatomic, strong) UILabel *firstBlock;
 @property (nonatomic, strong) UILabel *pointBlock;
@@ -33,6 +34,10 @@
 @property (nonatomic, strong) UILabel *infoTextLabel;
 @property (nonatomic, strong) UILabel *infoNumberLabel;
 @property (nonatomic, strong) UILabel *moneyLabel;
+@property (nonatomic, strong) UILabel *shareLabel;
+@property (nonatomic, strong) UILabel *holdingsLabel;
+
+
 
 @property (nonatomic, assign) int timeIndex;
 @property (nonatomic, assign) float currentPrice;
@@ -40,7 +45,10 @@
 @property (nonatomic, assign) float netGainLoss;
 @property (nonatomic, assign) float shortPrice;
 
-@property (nonatomic, assign) float money;
+@property (nonatomic, assign) int maxNumberOfShares;
+@property (nonatomic, assign) float numberOfShares;
+@property (nonatomic, assign) float cash;
+@property (nonatomic, assign) float holdingValue;
 
 @property (nonatomic, assign) CFTimeInterval startTime;
 @property (nonatomic, strong) CADisplayLink *displaylink;
@@ -76,20 +84,18 @@ static const float kUITransitionTime= 1;
     self.scrollView.backgroundColor = self.stateColor;
     self.graphTool.userInteractionEnabled = YES;
     self.startTime = CACurrentMediaTime();
+    self.cash = 1000000;
+    self.numberOfShares = self.shareSlider.value;
+    self.holdingValue = self.numberOfShares * self.currentPrice;
+    self.maxNumberOfShares = self.cash/self.currentPrice;
     
 #pragma mark blocking
     self.pointBlock = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 1, CGRectGetHeight(self.graphTool.frame))];
     self.pointBlock.backgroundColor = [UIColor blackColor];
     self.pointBlock.alpha = 0.15;
-    //    [UIView animateWithDuration:kTotalTime animations:^{
-    //        self.pointBlock.frame = CGRectMake(CGRectGetWidth(self.graphTool.frame), 0, 1, CGRectGetHeight(self.graphTool.frame));
-    //    }];
     self.timeIndex = self.pointBlock.frame.origin.x;
     self.firstBlock = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
     self.firstBlock.backgroundColor = self.stateColor;
-    //    [UIView animateWithDuration:kTotalTime animations:^{
-    //        self.firstBlock.frame = CGRectMake(CGRectGetWidth(self.graphTool.frame), 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-    //    }];
     
 #pragma mark label
     
@@ -98,20 +104,41 @@ static const float kUITransitionTime= 1;
     self.stateLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:42];
     self.stateLabel.alpha = 0.2;
     
-    self.infoTextLabel = [[UILabel alloc]initWithFrame:CGRectMake(-100, 70, 100, CGRectGetHeight(self.graphTool.frame))];
+    self.shareLabel = [[UILabel alloc]init];
+    self.shareLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:20];
+    self.shareLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.30];
+    
+    self.holdingsLabel = [[UILabel alloc]init];
+    self.holdingsLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:20];
+    self.holdingsLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.10];
+    
+    self.moneyLabel = [[UILabel alloc]init];
+    self.moneyLabel.text = [NSString stringWithFormat:@"$%0.2f",self.cash];
+    self.moneyLabel.textColor = [UIColor colorWithRed:158.0/255.0 green:29.0/255.0 blue:164.0/255.0 alpha:0.4];
+    self.moneyLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:36];
+    
+    self.infoTextLabel = [[UILabel alloc]init];
     self.infoTextLabel.text = @"Current Price $\nVolitility";
     self.infoTextLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:14];
     self.infoTextLabel.numberOfLines = 0;
     self.infoTextLabel.alpha = 0.45;
     self.infoTextLabel.textAlignment = NSTextAlignmentRight;
     
-    self.infoNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame))];
+    self.infoNumberLabel = [[UILabel alloc]init];
     self.infoNumberLabel.text = [NSString stringWithFormat:@"%f\n", self.currentPrice];
     self.infoNumberLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:14];
     self.infoNumberLabel.numberOfLines = 0;
     self.infoNumberLabel.alpha = 0.6;
     self.infoNumberLabel.textAlignment = NSTextAlignmentLeft;
     
+    self.shareSlider = [[UISlider alloc]initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) + 100, CGRectGetHeight(self.view.frame) - 100, 160, 50)];
+    CGAffineTransform trans = CGAffineTransformMakeRotation(M_PI * 1.5);
+    self.shareSlider.transform = trans;
+    [self.shareSlider setUserInteractionEnabled:YES];
+    [self.shareSlider setMaximumValue:1000];
+    [self.shareSlider setMinimumValue:0];
+    [self.shareSlider addTarget:self action:@selector(adjustShares:) forControlEvents:UIControlEventTouchDragInside];
+    self.shareSlider.value = 1;
     
 #pragma mark userActions
     
@@ -130,6 +157,7 @@ static const float kUITransitionTime= 1;
     self.shortSell = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(shortSell:)];
     [self.shortSell setNumberOfTapsRequired:1];
     self.shortSell.enabled = NO;
+    
     
 #pragma mark addingViews
     self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectZero];
@@ -162,10 +190,14 @@ static const float kUITransitionTime= 1;
     [self.graphTool addGestureRecognizer:self.sell];
     [self.graphTool addGestureRecognizer:self.initiateShortSelling];
     [self.graphTool addGestureRecognizer:self.shortSell];
-    //    [self.graphTool addSubview:self.infoLabel];
     [self.scrollView addSubview:self.stateLabel];
     [self.scrollView addSubview:self.infoTextLabel];
     [self.scrollView addSubview:self.infoNumberLabel];
+    [self.scrollView addSubview:self.moneyLabel];
+    [self.scrollView addSubview:self.shareLabel];
+    [self.scrollView addSubview:self.holdingsLabel];
+    [self.scrollView addSubview:self.shareSlider];
+    
     
 #pragma mark constraints
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
@@ -195,6 +227,8 @@ static const float kUITransitionTime= 1;
     return self.graphTool;
 }
 
+#pragma mark update
+
 - (void)update {
     self.timeIndex = ((self.displaylink.timestamp - self.startTime)/0.1);
     if (self.displaylink.timestamp - self.startTime >= kTotalTime) {
@@ -209,6 +243,17 @@ static const float kUITransitionTime= 1;
     self.infoTextLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
     self.infoNumberLabel.frame = CGRectMake(self.timeIndex + 5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame));
     self.infoNumberLabel.text = [NSString stringWithFormat:@"%0.2f\n", self.currentPrice];
+    
+    self.shareLabel.frame = CGRectMake(self.timeIndex, 152, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    
+    self.holdingsLabel.frame = CGRectMake(self.timeIndex, 172, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    
+    self.moneyLabel.frame = CGRectMake(self.timeIndex, 202, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    
+    self.shareLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value];
+    self.holdingsLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value * self.currentPrice];
+
+
     
     //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 }
@@ -225,7 +270,8 @@ static const float kUITransitionTime= 1;
     
     [UIView animateWithDuration:kUITransitionTime animations:^{
         self.stateLabel.alpha = 0.2;
-
+        self.holdingsLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.40];
+        
     }];
     //    self.infoLabel.text = [NSString stringWithFormat:@"Bought at Time%f\nPrice: $0.2%f", CACurrentMediaTime() - self.startTime, self.currentPrice];
     //    self.infoLabel.alpha = 0.3;
@@ -245,7 +291,6 @@ static const float kUITransitionTime= 1;
         self.stateLabel.alpha = 0.2;
         
     }];
-    
     self.sell.enabled = NO;
     self.buy.enabled = YES;
     
@@ -258,7 +303,7 @@ static const float kUITransitionTime= 1;
     self.initiateShortSelling.enabled = NO;
     self.shortSell.enabled = YES;
     self.buy.enabled = NO;
-
+    
     self.stateLabel.text = [NSString stringWithFormat:@"SHORTED@$%0.2f",self.shortPrice];
     self.stateLabel.alpha = 0;
     self.stateLabel.textColor = [UIColor colorWithRed:192.0/255.0 green:14.0/255.0 blue:14.0/255.0 alpha:1.0];
@@ -282,8 +327,15 @@ static const float kUITransitionTime= 1;
     self.stateLabel.textColor = [UIColor blackColor];
     [UIView animateWithDuration:kUITransitionTime animations:^{
         self.stateLabel.alpha = 0.2;
-            }];
-    
+    }];
+}
+
+- (void)adjustShares: (UISlider *)sliderValue {
+    sliderValue.value = self.numberOfShares;
+    self.holdingsLabel.text = [NSString stringWithFormat:@"$%f", self.holdingValue];
+    self.shareLabel.text = [NSString stringWithFormat:@"%f", self.numberOfShares];
+
+
 }
 
 @end

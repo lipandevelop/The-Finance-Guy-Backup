@@ -17,6 +17,9 @@
 		0A18402A1C692D1400FDAF13 /* Stock.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840291C692D1400FDAF13 /* Stock.m */; };
 		0A1840391C696C3300FDAF13 /* Coordinate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840381C696C3300FDAF13 /* Coordinate.m */; };
 		0A18403B1C69A71900FDAF13 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A18403A1C69A71900FDAF13 /* QuartzCore.framework */; };
+		0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0A5578001C6BED7200361B27 /* OpenSceen3.gif */; };
+		0A5578031C6BED7200361B27 /* OpenSceen3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */; };
+		0A5578061C6BEDAE00361B27 /* OpeningScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A5578051C6BEDAE00361B27 /* OpeningScreen.m */; };
 		0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F5D341C6AD29C00140263 /* ViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +41,10 @@
 		0A1840371C696C3300FDAF13 /* Coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinate.h; sourceTree = "<group>"; };
 		0A1840381C696C3300FDAF13 /* Coordinate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coordinate.m; sourceTree = "<group>"; };
 		0A18403A1C69A71900FDAF13 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		0A5578001C6BED7200361B27 /* OpenSceen3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = OpenSceen3.gif; sourceTree = "<group>"; };
+		0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = OpenSceen3.mp4; sourceTree = "<group>"; };
+		0A5578041C6BEDAE00361B27 /* OpeningScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpeningScreen.h; sourceTree = "<group>"; };
+		0A5578051C6BEDAE00361B27 /* OpeningScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpeningScreen.m; sourceTree = "<group>"; };
 		0A8F5D341C6AD29C00140263 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,6 +82,8 @@
 			children = (
 				0A18400E1C6929B400FDAF13 /* AppDelegate.h */,
 				0A18400F1C6929B400FDAF13 /* AppDelegate.m */,
+				0A5578041C6BEDAE00361B27 /* OpeningScreen.h */,
+				0A5578051C6BEDAE00361B27 /* OpeningScreen.m */,
 				0A1840111C6929B400FDAF13 /* ViewController.h */,
 				0A8F5D341C6AD29C00140263 /* ViewController.m */,
 				0A1840251C692A5400FDAF13 /* GraphTool.h */,
@@ -83,6 +92,7 @@
 				0A1840291C692D1400FDAF13 /* Stock.m */,
 				0A1840371C696C3300FDAF13 /* Coordinate.h */,
 				0A1840381C696C3300FDAF13 /* Coordinate.m */,
+				0A5577FF1C6BED1000361B27 /* Images */,
 				0A1840141C6929B400FDAF13 /* Main.storyboard */,
 				0A18401A1C6929B400FDAF13 /* Assets.xcassets */,
 				0A18401C1C6929B400FDAF13 /* LaunchScreen.storyboard */,
@@ -99,6 +109,15 @@
 				0A18400C1C6929B400FDAF13 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0A5577FF1C6BED1000361B27 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				0A5578001C6BED7200361B27 /* OpenSceen3.gif */,
+				0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,6 +151,7 @@
 				TargetAttributes = {
 					0A1840071C6929B400FDAF13 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = XFH2U5A8P5;
 					};
 				};
 			};
@@ -158,7 +178,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A5578031C6BED7200361B27 /* OpenSceen3.mp4 in Resources */,
 				0A18401E1C6929B400FDAF13 /* LaunchScreen.storyboard in Resources */,
+				0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */,
 				0A18401B1C6929B400FDAF13 /* Assets.xcassets in Resources */,
 				0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */,
 			);
@@ -173,6 +195,7 @@
 			files = (
 				0A18402A1C692D1400FDAF13 /* Stock.m in Sources */,
 				0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */,
+				0A5578061C6BEDAE00361B27 /* OpeningScreen.m in Sources */,
 				0A1840101C6929B400FDAF13 /* AppDelegate.m in Sources */,
 				0A1840191C6929B400FDAF13 /* StockLine.xcdatamodeld in Sources */,
 				0A18400D1C6929B400FDAF13 /* main.m in Sources */,
@@ -289,10 +312,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = StockLine/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Li-Pan.StockLine";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -301,10 +327,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = StockLine/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Li-Pan.StockLine";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
