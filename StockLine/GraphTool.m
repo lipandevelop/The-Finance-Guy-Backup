@@ -65,7 +65,7 @@ static const float kYOffset = 500;
 }
 
 - (void)simulateStock {
-    for (int x; x < 2400; x += 3) {
+    for (int x; x < 2500; x += 5) {
         int f = arc4random_uniform(99);
         float distribution = (float) f;
         

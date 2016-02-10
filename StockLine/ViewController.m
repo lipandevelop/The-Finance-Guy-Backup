@@ -47,7 +47,7 @@
 
 @implementation ViewController
 
-static const float kTotalTime = 80;
+static const float kTotalTime = 49.9;
 static const float kUITransitionTime= 1;
 
 - (void)viewDidLoad {
@@ -64,7 +64,7 @@ static const float kUITransitionTime= 1;
     
 #pragma mark graph
     self.view.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:155.0/255.0 blue:64.0/255.0 alpha:1.0];
-    self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 7200, 800)];
+    self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 2500, 800)];
     self.graphTool.backgroundColor = self.view.backgroundColor;
     self.scrollView.backgroundColor = self.view.backgroundColor;
     self.graphTool.userInteractionEnabled = YES;
@@ -175,7 +175,7 @@ static const float kUITransitionTime= 1;
     }
     self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
     self.currentPrice = [(self.currentCoordinate.price)floatValue];
-        NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
+//    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 }
 
 - (void)buyAction:(UITapGestureRecognizer *)sender {
@@ -191,7 +191,7 @@ static const float kUITransitionTime= 1;
     }];
 }
 - (void)sellAction:(UITapGestureRecognizer *)sender {
-    self.netGainLoss =  -(self.boughtPrice - self.currentPrice);
+    self.netGainLoss =  self.boughtPrice - self.currentPrice;
     
     NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
     
@@ -209,7 +209,7 @@ static const float kUITransitionTime= 1;
     self.buy.enabled = NO;
 }
 - (void)shortSell:(UITapGestureRecognizer *)sender {
-    self.netGainLoss = self.shortPrice - self.currentPrice;
+    self.netGainLoss = -(self.shortPrice - self.currentPrice);
     self.initiateShortSelling.enabled = YES;
     
     NSLog(@"%f, %d, Shorted At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
