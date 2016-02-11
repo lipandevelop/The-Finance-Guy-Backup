@@ -15,6 +15,7 @@
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) AVPlayer *backGroundImagePlayer;
 @property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *quoteLabel;
 
 @end
 
@@ -36,23 +37,36 @@
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"OpenSceen3" ofType:@"gif"];
     NSData *gif = [NSData dataWithContentsOfFile:filePath];
     UIWebView *webViewBG = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 746, 381)];
+    
     [webViewBG loadData:gif MIMEType:@"image/gif" textEncodingName:nil baseURL:nil];
     webViewBG.userInteractionEnabled = NO;
     webViewBG.translatesAutoresizingMaskIntoConstraints = NO;
     
-    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 70, 600, 100)];
+    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(71, 70, 600, 100)];
     self.titleLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:32];
     self.titleLabel.text = @"THE FINANCE GUY";
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.alpha = 0.25;
+    [UIView animateWithDuration:150 animations:^{
+        self.titleLabel.frame = CGRectMake(-220, 70, 600, 100);
+    }];
 
-    
+    self.quoteLabel = [[UILabel alloc]initWithFrame:CGRectMake(111, 89, 600, 100)];
+    self.quoteLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
+    self.quoteLabel.text = @"Be Greedy When Other's Are Fearful";
+    self.quoteLabel.textAlignment = NSTextAlignmentCenter;
+    self.quoteLabel.alpha = 0.55;
+    [UIView animateWithDuration:40 animations:^{
+        self.quoteLabel.frame = CGRectMake(150, 89, 600, 100);
+        self.quoteLabel.alpha = 0.15;
+    }];
+
 //    NSString *backGroundImagePath = [[NSBundle mainBundle] pathForResource:@"OpenSceen3" ofType:@"mp4"];
 //    NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundImagePath];
 //    self.backGroundImagePlayer = [[AVPlayer alloc]initWithURL:backGroundMusicURL];
 //    [self.backGroundImagePlayer play];
     
-    UIButton *playBtn = [[UIButton alloc] initWithFrame:CGRectMake(65, 225, 140, 30)];
+    UIButton *playBtn = [[UIButton alloc] initWithFrame:CGRectMake(115, 215, 140, 30)];
     playBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
     playBtn.layer.borderWidth = 2.0;
     playBtn.titleLabel.font = [UIFont systemFontOfSize:16];
@@ -68,6 +82,7 @@
     self.scrollView.clipsToBounds = YES;
     self.scrollView.bounces = NO;
     [self.scrollView addSubview:self.titleLabel];
+    [self.scrollView addSubview:self.quoteLabel];
     [self.view addSubview:playBtn];
     [self.view bringSubviewToFront:playBtn];
     

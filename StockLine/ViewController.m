@@ -20,6 +20,8 @@
 @property (nonatomic, strong) GraphTool *graphTool;
 @property (nonatomic, strong) Coordinate *currentCoordinate;
 @property (nonatomic, strong) UIColor *stateColor;
+@property (nonatomic, assign) CFTimeInterval startTime;
+@property (nonatomic, strong) CADisplayLink *displaylink;
 @property (nonatomic, strong) AVAudioPlayer *backgroundMusicPlayer;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureTool;
@@ -54,10 +56,6 @@
 @property (nonatomic, assign) float cash;
 @property (nonatomic, assign) float holdingValue;
 
-@property (nonatomic, assign) CFTimeInterval startTime;
-@property (nonatomic, strong) CADisplayLink *displaylink;
-
-@property (nonatomic, assign) BOOL scrollEnabled;
 @property (nonatomic, assign) BOOL bought;
 @property (nonatomic, assign) BOOL shorted;
 
@@ -70,7 +68,7 @@ static const float kUITransitionTime= 1;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -89,13 +87,11 @@ static const float kUITransitionTime= 1;
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
         
         NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"GameMusic_Large" ofType:@"mp3"];
-        
-        
         NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
         self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
         self.backgroundMusicPlayer.numberOfLoops = -1;
         
-        //    [player prepareToPlay];
+        [self.backgroundMusicPlayer prepareToPlay];
         [self.backgroundMusicPlayer play];
     });
     
@@ -121,6 +117,13 @@ static const float kUITransitionTime= 1;
     
     self.shortSellPremiumLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 1)];
     self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:0.0 green:1.0 blue:196.0/255.0 alpha:1.0];
+    
+    self.shortSellPremiumLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 1)];
+    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:0.0 green:1.0 blue:196.0/255.0 alpha:1.0];
+    [self.scrollView addSubview:self.shortSellPremiumLabel];
+    [UIView animateWithDuration:10 animations:^{
+        self.shortSellPremiumLabel.frame = CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 20);
+    }];
     
 #pragma mark label
     
@@ -175,10 +178,10 @@ static const float kUITransitionTime= 1;
     CGAffineTransform trans = CGAffineTransformMakeRotation(M_PI * 1.5);
     self.shareSlider.transform = trans;
     [self.shareSlider setUserInteractionEnabled:YES];
-    [self.shareSlider setMaximumValue:1000];
-    [self.shareSlider setMinimumValue:0];
+    [self.shareSlider setMaximumValue:5000];
+    [self.shareSlider setMinimumValue:1];
     [self.shareSlider addTarget:self action:@selector(adjustShares:) forControlEvents:UIControlEventTouchDragInside];
-    self.shareSlider.value = 1;
+    self.shareSlider.value = 1000;
     
 #pragma mark userActions
     
@@ -223,13 +226,13 @@ static const float kUITransitionTime= 1;
     self.scrollView.bounces = NO;
     self.scrollView.delegate = self;
     [self.scrollView addSubview:self.graphTool];
-    [self.graphTool addSubview:self.firstBlock];
-    [self.graphTool addSubview:self.pointBlock];
+    [self.scrollView addSubview:self.firstBlock];
+    [self.scrollView addSubview:self.pointBlock];
     
-    [self.graphTool addGestureRecognizer:self.buy];
-    [self.graphTool addGestureRecognizer:self.sell];
-    [self.graphTool addGestureRecognizer:self.initiateShortSelling];
-    [self.graphTool addGestureRecognizer:self.shortSell];
+    [self.scrollView addGestureRecognizer:self.buy];
+    [self.scrollView addGestureRecognizer:self.sell];
+    [self.scrollView addGestureRecognizer:self.initiateShortSelling];
+    [self.scrollView addGestureRecognizer:self.shortSell];
     [self.scrollView addSubview:self.stateLabel];
     [self.scrollView addSubview:self.infoTextLabel];
     [self.scrollView addSubview:self.infoNumberLabel];
@@ -269,8 +272,8 @@ static const float kUITransitionTime= 1;
         self.displaylink.paused = YES;
     }
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-    self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
-    self.currentPrice = [(self.currentCoordinate.price)floatValue];
+        self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
+        self.currentPrice = [(self.currentCoordinate.price)floatValue];
     });
     
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
@@ -290,7 +293,7 @@ static const float kUITransitionTime= 1;
     
     self.shareLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value];
     self.holdingsLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value * self.currentPrice];
-    self.moneyLabel.text = [NSString stringWithFormat:@"$0,000%0.2f", self.cash];
+    self.moneyLabel.text = [NSString stringWithFormat:@"$0.20,000%0.2f", self.cash];
     
     //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 }
@@ -308,7 +311,7 @@ static const float kUITransitionTime= 1;
     
     [UIView animateWithDuration:kUITransitionTime animations:^{
         self.stateLabel.alpha = 0.2;
-        self.holdingsLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.40];
+        self.holdingsLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.55];
         
     }];
     //    self.infoLabel.text = [NSString stringWithFormat:@"Bought at Time%f\nPrice: $0.2%f", CACurrentMediaTime() - self.startTime, self.currentPrice];
@@ -328,6 +331,7 @@ static const float kUITransitionTime= 1;
     self.stateLabel.textColor = [UIColor blackColor];
     [UIView animateWithDuration:kUITransitionTime animations:^{
         self.stateLabel.alpha = 0.2;
+        self.holdingsLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.10];
         
     }];
     
@@ -357,7 +361,7 @@ static const float kUITransitionTime= 1;
             self.thirdInfoLabel.alpha = 0.0;
         }];
     }];
-
+    
     self.sell.enabled = NO;
     self.buy.enabled = YES;
     
@@ -379,17 +383,11 @@ static const float kUITransitionTime= 1;
         self.stateLabel.alpha = 0.2;
     }];
     
-    self.shortSellPremiumLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 1)];
-    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:0.0 green:1.0 blue:196.0/255.0 alpha:1.0];
-    [self.scrollView addSubview:self.shortSellPremiumLabel];
-    [UIView animateWithDuration:10 animations:^{
-        self.shortSellPremiumLabel.frame = CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 20);
-    }];
 }
 - (void)shortSell:(UITapGestureRecognizer *)sender {
     self.netGainLoss = (self.shortPrice - self.currentPrice);
     self.cash += self.netGainLoss * self.numberOfShares;
-
+    
     self.initiateShortSelling.enabled = YES;
     
     NSLog(@"%f, %d, Shorted At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
