@@ -70,6 +70,15 @@ static const float kUITransitionTime= 1;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+#pragma mark time
+    //    NSLog(@"%f", self.startTime);
+    self.displaylink = [CADisplayLink displayLinkWithTarget:self selector:@selector(update)];
+    [self.displaylink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    self.stateColor = [UIColor colorWithRed:235.0/255.0 green:155.0/255.0 blue:64.0/255.0 alpha:1.0];
     [self loadContent];
 }
 
@@ -89,13 +98,6 @@ static const float kUITransitionTime= 1;
         //    [player prepareToPlay];
         [self.backgroundMusicPlayer play];
     });
-    
-    
-#pragma mark time
-    //    NSLog(@"%f", self.startTime);
-    self.displaylink = [CADisplayLink displayLinkWithTarget:self selector:@selector(update)];
-    [self.displaylink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    self.stateColor = [UIColor colorWithRed:235.0/255.0 green:155.0/255.0 blue:64.0/255.0 alpha:1.0];
     
 #pragma mark graph
     self.view.backgroundColor = self.stateColor;
@@ -266,8 +268,10 @@ static const float kUITransitionTime= 1;
     if (self.displaylink.timestamp - self.startTime >= kTotalTime) {
         self.displaylink.paused = YES;
     }
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
     self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
     self.currentPrice = [(self.currentCoordinate.price)floatValue];
+    });
     
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
@@ -294,6 +298,7 @@ static const float kUITransitionTime= 1;
 - (void)buyAction:(UITapGestureRecognizer *)sender {
     self.boughtPrice = self.currentPrice;
     NSLog(@"%f, %d, %f, Bought At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
+    
     
     self.buy.enabled = NO;
     self.sell.enabled = YES;
@@ -442,7 +447,6 @@ static const float kUITransitionTime= 1;
 {
     return UIInterfaceOrientationMaskLandscape;
 }
-
 
 //-(void) loadBackgroundMusic {
 //    NSError *error;
