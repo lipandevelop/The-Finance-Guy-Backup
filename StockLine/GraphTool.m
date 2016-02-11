@@ -88,7 +88,7 @@ static const float kStockPriceRange = 100;
         float stockPriceOnGraph = (1000 - self.stock.stockPrice)/20;
         [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(stockPriceOnGraph)]];
         
-        NSLog(@"$%0.2f, $%0.2f", self.stock.stockPrice, stockPriceOnGraph);
+//        NSLog(@"$%0.2f, $%0.2f", self.stock.stockPrice, stockPriceOnGraph);
         
 //        NSLog(@"count: %lu", (unsigned long)self.arrayOfCoordinates.count);
         //NSLog(@"%@", self.stock.arrayOfCoordinates.description);

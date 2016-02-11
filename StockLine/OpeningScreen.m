@@ -7,12 +7,14 @@
 //
 
 #import "OpeningScreen.h"
-#import <MediaPlayer/MediaPlayer.h>
-#import <AVKit/AVKit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import "ViewController.h"
 
-@interface OpeningScreen ()
-@property (nonatomic, strong) AVPlayerViewController *backgroundVideoController;
+@interface OpeningScreen () <UIScrollViewDelegate, AVAudioPlayerDelegate>
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) AVPlayer *backGroundImagePlayer;
+@property (nonatomic, strong) UILabel *titleLabel;
 
 @end
 
@@ -20,62 +22,79 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"OpenScene" ofType:@"mp4"];
-    NSURL *gif = [NSURL fileURLWithPath:filePath];
-    
-        UIWebView *webViewBG = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
-        [webViewBG loadData:gif MIMEType:@"image/gif" textEncodingName:nil baseURL:nil];
-        webViewBG.userInteractionEnabled = NO;
-        [self.view addSubview:webViewBG];
-    
-//    MPMoviePlayerController *player = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL fileURLWithPath:video]];
-//    player.view.frame = CGRectMake(184, 200, 400, 300);
-//    [self.view addSubview:player.view];
-//    [player play];
-    
-    //    UIView *filter = [[UIView alloc] initWithFrame:self.view.frame];
-    //    filter.backgroundColor = [UIColor blackColor];
-    //    filter.alpha = 0.05;
-    //    [self.view addSubview:filter];
-    
-//    UILabel *welcomeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 100, self.view.bounds.size.width, 100)];
-//    welcomeLabel.text = @"WELCOME";
-//    welcomeLabel.textColor = [UIColor whiteColor];
-//    welcomeLabel.font = [UIFont systemFontOfSize:50];
-//    welcomeLabel.textAlignment = NSTextAlignmentCenter;
-//    [self.view addSubview:welcomeLabel];
-    
-    UIButton *playButton = [[UIButton alloc] initWithFrame:CGRectMake(40, 360, 240, 40)];
-    playButton.layer.borderColor = [[UIColor whiteColor] CGColor];
-    playButton.layer.borderWidth = 2.0;
-    playButton.titleLabel.font = [UIFont systemFontOfSize:24];
-    [playButton setTintColor:[UIColor whiteColor]];
-    [playButton setTitle:@"PLAY" forState:UIControlStateNormal];
-    [self.view addSubview:playButton];
-    
-//    UIButton *signUpBtn = [[UIButton alloc] initWithFrame:CGRectMake(40, 420, 240, 40)];
-//    signUpBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
-//    signUpBtn.layer.borderWidth = 2.0f;
-//    signUpBtn.titleLabel.font = [UIFont systemFontOfSize:24];
-//    [signUpBtn setTintColor:[UIColor whiteColor]];
-//    [signUpBtn setTitle:@"Sign Up" forState:UIControlStateNormal];
-//    [self.view addSubview:signUpBtn];
+    [self loadContent];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+- (void) loadContent {
+    
+    self.view.backgroundColor = [UIColor blackColor];
+    //    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 120, CGRectGetWidth(self.view.frame), 500)];
+    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectZero];
+    self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.scrollView setContentOffset:CGPointMake(300, 0)];
+    
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"OpenSceen3" ofType:@"gif"];
+    NSData *gif = [NSData dataWithContentsOfFile:filePath];
+    UIWebView *webViewBG = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 746, 381)];
+    [webViewBG loadData:gif MIMEType:@"image/gif" textEncodingName:nil baseURL:nil];
+    webViewBG.userInteractionEnabled = NO;
+    webViewBG.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 70, 600, 100)];
+    self.titleLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:32];
+    self.titleLabel.text = @"THE FINANCE GUY";
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.titleLabel.alpha = 0.25;
 
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
+    
+//    NSString *backGroundImagePath = [[NSBundle mainBundle] pathForResource:@"OpenSceen3" ofType:@"mp4"];
+//    NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundImagePath];
+//    self.backGroundImagePlayer = [[AVPlayer alloc]initWithURL:backGroundMusicURL];
+//    [self.backGroundImagePlayer play];
+    
+    UIButton *playBtn = [[UIButton alloc] initWithFrame:CGRectMake(65, 225, 140, 30)];
+    playBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
+    playBtn.layer.borderWidth = 2.0;
+    playBtn.titleLabel.font = [UIFont systemFontOfSize:16];
+    [playBtn setTintColor:[UIColor whiteColor]];
+    [playBtn setTitle:@"Play" forState:UIControlStateNormal];
+    [playBtn addTarget:self action:@selector(presentGameController) forControlEvents:UIControlEventTouchUpInside];
+    //playBtn.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.scrollView.contentSize = CGSizeMake(CGRectGetWidth(webViewBG.frame), CGRectGetHeight(webViewBG.frame));
+    self.scrollView.backgroundColor = [UIColor blackColor];
+    [self.view addSubview:self.scrollView];
+    [self.scrollView addSubview:webViewBG];
+    self.scrollView.clipsToBounds = YES;
+    self.scrollView.bounces = NO;
+    [self.scrollView addSubview:self.titleLabel];
+    [self.view addSubview:playBtn];
+    [self.view bringSubviewToFront:playBtn];
+    
+    self.scrollView.delegate = self;
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:440]];
+    
 }
-
 - (void)presentGameController {
     ViewController *viewController = [[ViewController alloc] init];
     [self presentViewController:viewController animated:YES completion:nil];
+}
+
+-(BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+-(NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskLandscape;
 }
 
 @end

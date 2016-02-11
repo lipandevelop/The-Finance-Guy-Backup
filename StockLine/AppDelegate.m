@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "OpeningScreen.h"
 
 @interface AppDelegate ()
 
@@ -15,8 +16,15 @@
 @implementation AppDelegate
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
+{
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    OpeningScreen *openingScreen = [[OpeningScreen alloc]init];
+    
+    self.window.rootViewController = openingScreen;
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
