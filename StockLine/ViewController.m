@@ -49,7 +49,7 @@
 @property (nonatomic, assign) float netGainLoss;
 @property (nonatomic, assign) float shortPrice;
 
-@property (nonatomic, assign) int maxNumberOfShares;
+@property (nonatomic, assign) float maxNumberOfShares;
 @property (nonatomic, assign) float numberOfShares;
 @property (nonatomic, assign) float cash;
 @property (nonatomic, assign) float holdingValue;
@@ -78,18 +78,18 @@ static const float kUITransitionTime= 1;
 #pragma mark music
     
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-
-    NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"GameMusic_Large" ofType:@"mp3"];
+        
+        NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"GameMusic_Large" ofType:@"mp3"];
+        
+        
+        NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
+        self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
+        self.backgroundMusicPlayer.numberOfLoops = -1;
+        
+        //    [player prepareToPlay];
+        [self.backgroundMusicPlayer play];
+    });
     
-    
-    NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
-    self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
-    self.backgroundMusicPlayer.numberOfLoops = -1;
-    
-//    [player prepareToPlay];
-    [self.backgroundMusicPlayer play];
-        });
-
     
 #pragma mark time
     //    NSLog(@"%f", self.startTime);
@@ -104,8 +104,8 @@ static const float kUITransitionTime= 1;
     self.scrollView.backgroundColor = self.stateColor;
     self.graphTool.userInteractionEnabled = YES;
     self.startTime = CACurrentMediaTime();
-    self.cash = 1000000;
-    self.numberOfShares = self.shareSlider.value;
+    self.cash = 0;
+    self.numberOfShares = 1000;
     self.holdingValue = self.numberOfShares * self.currentPrice;
     self.maxNumberOfShares = self.cash/self.currentPrice;
     
@@ -122,7 +122,7 @@ static const float kUITransitionTime= 1;
     
 #pragma mark label
     
-    self.stateLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
+    self.stateLabel = [[UILabel alloc]initWithFrame:CGRectMake(1, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
     self.stateLabel.text = @"WATCHING";
     self.stateLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:42];
     self.stateLabel.alpha = 0.2;
@@ -137,14 +137,14 @@ static const float kUITransitionTime= 1;
     
     self.moneyLabel = [[UILabel alloc]init];
     self.moneyLabel.text = [NSString stringWithFormat:@"$%0.2f",self.cash];
-    self.moneyLabel.textColor = [UIColor colorWithRed:158.0/255.0 green:29.0/255.0 blue:164.0/255.0 alpha:0.4];
+    self.moneyLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:140.0/255.0 alpha:0.4];
     self.moneyLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:36];
     
     self.infoTextLabel = [[UILabel alloc]init];
     self.infoTextLabel.text = @"Current Price $\nVolitility";
     self.infoTextLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:14];
     self.infoTextLabel.numberOfLines = 0;
-    self.infoTextLabel.alpha = 0.45;
+    self.infoTextLabel.alpha = 0.25;
     self.infoTextLabel.textAlignment = NSTextAlignmentRight;
     
     self.infoNumberLabel = [[UILabel alloc]init];
@@ -154,22 +154,22 @@ static const float kUITransitionTime= 1;
     self.infoNumberLabel.alpha = 0.6;
     self.infoNumberLabel.textAlignment = NSTextAlignmentLeft;
     
-    self.firstInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, 50, 100, CGRectGetHeight(self.graphTool.frame))];
-    self.firstInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:30];
-    self.firstInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:100.0/255.0 blue:0.0/255.0 alpha:0.30];
-    self.firstInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.boughtPrice];
+    self.firstInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, -80, 100, CGRectGetHeight(self.graphTool.frame))];
+    self.firstInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Regular") size:24];
+    self.firstInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:100.0/255.0 blue:0.0/255.0 alpha:0.5];
+    //self.firstInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.boughtPrice];
     
-    self.secondInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
-    self.secondInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:30];
-    self.secondInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:50/255.0 blue:0.0/255.0 alpha:0.30];
-    self.secondInfoLabel.text = [NSString stringWithFormat:@"-$%0.2f", self.currentPrice];
+    self.secondInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, -90, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
+    self.secondInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Regular") size:24];
+    self.secondInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:50/255.0 blue:0.0/255.0 alpha:0.5];
+    //self.secondInfoLabel.text = [NSString stringWithFormat:@"-$%0.2f", self.currentPrice];
     
-    self.thirdInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
-    self.thirdInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:34];
-    self.thirdInfoLabel.textColor = [UIColor colorWithRed:0.0/255.0 green:200.0/255.0 blue:0.0/255.0 alpha:0.10];
-    self.thirdInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.netGainLoss];
+    self.thirdInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, -120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
+    self.thirdInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Regular") size:28];
+    self.thirdInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:140.0/255.0 alpha:0.6];
+    //self.thirdInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.netGainLoss];
     
-    self.shareSlider = [[UISlider alloc]initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) + 100, CGRectGetHeight(self.view.frame) - 100, 160, 50)];
+    self.shareSlider = [[UISlider alloc]initWithFrame:CGRectMake(520, 100, 50, 160)];
     CGAffineTransform trans = CGAffineTransformMakeRotation(M_PI * 1.5);
     self.shareSlider.transform = trans;
     [self.shareSlider setUserInteractionEnabled:YES];
@@ -193,7 +193,7 @@ static const float kUITransitionTime= 1;
     self.initiateShortSelling.enabled = YES;
     
     self.shortSell = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(shortSell:)];
-    [self.shortSell setNumberOfTapsRequired:1];
+    [self.shortSell setNumberOfTapsRequired:2];
     self.shortSell.enabled = NO;
     
     
@@ -272,6 +272,8 @@ static const float kUITransitionTime= 1;
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
+    self.stateLabel.frame = CGRectMake(self.timeIndex * 0.3, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    
     self.infoTextLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
     
     self.infoNumberLabel.frame = CGRectMake(self.timeIndex + 5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame));
@@ -284,7 +286,8 @@ static const float kUITransitionTime= 1;
     
     self.shareLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value];
     self.holdingsLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value * self.currentPrice];
-
+    self.moneyLabel.text = [NSString stringWithFormat:@"$0,000%0.2f", self.cash];
+    
     //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 }
 
@@ -311,6 +314,7 @@ static const float kUITransitionTime= 1;
 }
 - (void)sellAction:(UITapGestureRecognizer *)sender {
     self.netGainLoss =  -(self.boughtPrice - self.currentPrice);
+    self.cash += self.netGainLoss * self.numberOfShares;
     
     NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
     
@@ -322,41 +326,32 @@ static const float kUITransitionTime= 1;
         
     }];
     
-    self.firstInfoLabel.frame = CGRectMake(420, 50, 100, CGRectGetHeight(self.graphTool.frame));
-    self.firstInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.boughtPrice];
+    self.firstInfoLabel.frame = CGRectMake(320, 50, 100, CGRectGetHeight(self.graphTool.frame));
+    self.firstInfoLabel.text = [NSString stringWithFormat:@"  $%0.2f", self.currentPrice * self.numberOfShares];
     
-    self.secondInfoLabel.frame = CGRectMake(420, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-    self.secondInfoLabel.text = [NSString stringWithFormat:@"-$%0.2f", self.currentPrice];
+    self.secondInfoLabel.frame = CGRectMake(320, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    self.secondInfoLabel.text = [NSString stringWithFormat:@"- $%0.2f", self.boughtPrice * self.numberOfShares];
     
-    self.thirdInfoLabel.frame = CGRectMake(420, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-    self.thirdInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.netGainLoss];
+    self.thirdInfoLabel.frame = CGRectMake(330, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    self.thirdInfoLabel.text = [NSString stringWithFormat:@"  $%0.2f", self.netGainLoss * self.numberOfShares];
     
-    
-    [UIView animateWithDuration:kUITransitionTime animations:^{
-        self.firstInfoLabel.frame = CGRectMake(350, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.secondInfoLabel.frame = CGRectMake(310, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.thirdInfoLabel.frame = CGRectMake(270, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    [UIView animateWithDuration:4.5 animations:^{
+        self.firstInfoLabel.frame = CGRectMake(320, 50, 100, CGRectGetHeight(self.graphTool.frame));
+        self.firstInfoLabel.alpha = 1;
+        self.secondInfoLabel.frame = CGRectMake(320, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+        self.secondInfoLabel.alpha = 1;
+        self.thirdInfoLabel.frame = CGRectMake(320, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+        self.thirdInfoLabel.alpha = 1;
+        
+        [UIView animateWithDuration:2 animations:^{
+            self.firstInfoLabel.frame = CGRectMake(650, 50, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.firstInfoLabel.alpha = 0.0;
+            self.secondInfoLabel.frame = CGRectMake(610, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.secondInfoLabel.alpha = 0.0;
+            self.thirdInfoLabel.frame = CGRectMake(570, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.thirdInfoLabel.alpha = 0.0;
+        }];
     }];
-    
-    [UIView animateWithDuration:1.5 animations:^{
-        self.firstInfoLabel.frame = CGRectMake(350, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.firstInfoLabel.alpha = 0.6;
-        self.secondInfoLabel.frame = CGRectMake(310, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.secondInfoLabel.alpha = 0.6;
-        self.thirdInfoLabel.frame = CGRectMake(270, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.thirdInfoLabel.alpha = 0.7;
-    }];
-    
-    [UIView animateWithDuration:0.5 animations:^{
-        self.firstInfoLabel.frame = CGRectMake(350, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.firstInfoLabel.alpha = 0.0;
-        self.secondInfoLabel.frame = CGRectMake(310, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.secondInfoLabel.alpha = 0.0;
-        self.thirdInfoLabel.frame = CGRectMake(270, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.thirdInfoLabel.alpha = 0.0;
-    }];
-    
-    
 
     self.sell.enabled = NO;
     self.buy.enabled = YES;
@@ -384,10 +379,12 @@ static const float kUITransitionTime= 1;
     [self.scrollView addSubview:self.shortSellPremiumLabel];
     [UIView animateWithDuration:10 animations:^{
         self.shortSellPremiumLabel.frame = CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 20);
-            }];
+    }];
 }
 - (void)shortSell:(UITapGestureRecognizer *)sender {
     self.netGainLoss = (self.shortPrice - self.currentPrice);
+    self.cash += self.netGainLoss * self.numberOfShares;
+
     self.initiateShortSelling.enabled = YES;
     
     NSLog(@"%f, %d, Shorted At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
@@ -402,43 +399,31 @@ static const float kUITransitionTime= 1;
         self.stateLabel.alpha = 0.2;
     }];
     
-    self.firstInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(350, 1100, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
-    self.firstInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:30];
-    self.firstInfoLabel.textColor = [UIColor colorWithRed:100.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.30];
-    self.firstInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.shortPrice];
+    self.firstInfoLabel.frame = CGRectMake(320, 50, 100, CGRectGetHeight(self.graphTool.frame));
+    self.firstInfoLabel.text = [NSString stringWithFormat:@"  $%0.2f", self.currentPrice * self.numberOfShares];
     
-    self.secondInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(350, 800, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
-    self.secondInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:30];
-    self.secondInfoLabel.textColor = [UIColor colorWithRed:100.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.30];
-    self.secondInfoLabel.text = [NSString stringWithFormat:@"-$%0.2f", self.currentPrice];
+    self.secondInfoLabel.frame = CGRectMake(320, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    self.secondInfoLabel.text = [NSString stringWithFormat:@"- $%0.2f", self.shortPrice * self.numberOfShares];
     
-    self.thirdInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(350, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
-    self.thirdInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:30];
-    self.thirdInfoLabel.textColor = [UIColor colorWithRed:100.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.10];
-    self.thirdInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.netGainLoss];
+    self.thirdInfoLabel.frame = CGRectMake(330, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    self.thirdInfoLabel.text = [NSString stringWithFormat:@"  $%0.2f", self.netGainLoss * self.numberOfShares];
     
-    [UIView animateWithDuration:kUITransitionTime animations:^{
-        self.firstInfoLabel.frame = CGRectMake(350, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.secondInfoLabel.frame = CGRectMake(310, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.thirdInfoLabel.frame = CGRectMake(270, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-    }];
-    
-    [UIView animateWithDuration:1.5 animations:^{
-        self.firstInfoLabel.frame = CGRectMake(350, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.firstInfoLabel.alpha = 0.6;
-        self.secondInfoLabel.frame = CGRectMake(310, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.secondInfoLabel.alpha = 0.6;
-        self.thirdInfoLabel.frame = CGRectMake(270, 400, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.thirdInfoLabel.alpha = 0.7;
-    }];
-    
-    [UIView animateWithDuration:0.5 animations:^{
-        self.firstInfoLabel.frame = CGRectMake(350, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.firstInfoLabel.alpha = 0.0;
-        self.secondInfoLabel.frame = CGRectMake(310, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.secondInfoLabel.alpha = 0.0;
-        self.thirdInfoLabel.frame = CGRectMake(270, 1500, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
-        self.thirdInfoLabel.alpha = 0.0;
+    [UIView animateWithDuration:4.5 animations:^{
+        self.firstInfoLabel.frame = CGRectMake(320, 50, 100, CGRectGetHeight(self.graphTool.frame));
+        self.firstInfoLabel.alpha = 1;
+        self.secondInfoLabel.frame = CGRectMake(320, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+        self.secondInfoLabel.alpha = 1;
+        self.thirdInfoLabel.frame = CGRectMake(320, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+        self.thirdInfoLabel.alpha = 1;
+        
+        [UIView animateWithDuration:2 animations:^{
+            self.firstInfoLabel.frame = CGRectMake(650, 50, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.firstInfoLabel.alpha = 0.0;
+            self.secondInfoLabel.frame = CGRectMake(610, 80, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.secondInfoLabel.alpha = 0.0;
+            self.thirdInfoLabel.frame = CGRectMake(570, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.thirdInfoLabel.alpha = 0.0;
+        }];
     }];
     
 }
@@ -464,11 +449,11 @@ static const float kUITransitionTime= 1;
 //    NSURL *url = [[NSBundle mainBundle]
 //                  URLForResource: @"GameMusic_Large" withExtension:@"mp3"];
 //    NSData *soundData = [NSData dataWithContentsOfURL:url];
-//    
+//
 //    self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithData:soundData error:&error];
 //    self.backgroundMusicPlayer.numberOfLoops = -1; //Set to loop until stopped
 //    self.backgroundMusicPlayer.volume = 0;
-//    
+//
 //    if (error) {
 //        NSLog(@"Error in audioPlayer: %@",
 //              [error localizedDescription]);
